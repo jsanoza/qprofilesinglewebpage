@@ -90,6 +90,8 @@ class ProfileController extends GetxController {
             title: Text("Coming soon"),
           );
         });
+
+        
     // var vCard = VCard();
     // vCard.firstName = 'John';
     // vCard.middleName = 'Pagcu';
