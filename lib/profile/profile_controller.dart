@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:html' as webFile;
+import 'package:digiqard/utils/app_utils.dart';
 import 'package:vcard_maintained/vcard_maintained.dart';
 import 'package:azstore/azstore.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,7 @@ class ProfileController extends GetxController {
   List<Socials> socialMedia = <Socials>[].obs;
   List<Uint8List> profilePhoto = <Uint8List>[].obs;
   var profilePhotoFromNetwork = "".obs;
+  var profilePhotoFromNetworkBytes = "".obs;
 
   @override
   void onInit() {
@@ -57,6 +60,9 @@ class ProfileController extends GetxController {
         log(linkList.first.faviconUrl!);
         socialMedia.addAll(userInformation.first.socials);
         socialMedia.forEach((element) => log(element.name.toString()));
+
+        final imgBase64Str = await networkImageToBase64('https://digiqard.blob.core.windows.net/userprofilepicture/${userInformation.first.email}.jpg');
+        profilePhotoFromNetworkBytes.value = imgBase64Str.toString();
       } else {
         log("${response.statusCode} ${response.reasonPhrase} ");
       }
@@ -77,21 +83,38 @@ class ProfileController extends GetxController {
   // }
 
   // Future<File> _createFile(String data) async {
-  //   final file = await _localFile;
+  //   final file = await _localFile;f
   //   return file.writeAsString(data);
   // }
 
   addToContacts() async {
-    log("Im here clicked!");
-    showDialog(
-        context: context,
-        builder: (_) {
-          return const AlertDialog(
-            title: Text("Coming soon"),
-          );
-        });
+    var vCard = VCard();
+    vCard.firstName = userInformation.first.firstname.toString().toTitleCase();
+    vCard.lastName = userInformation.first.lastname.toString().toTitleCase();
+    vCard.organization = userInformation.first.organization;
+    vCard.workPhone = userInformation.first.phoneNumber;
+    vCard.photo.embedFromString(profilePhotoFromNetworkBytes.value, "JPG");
+    vCard.note = userInformation.first.bio;
+    vCard.jobTitle = userInformation.first.position.toString().toTitleCase();
+    vCard.workEmail = userInformation.first.email.toString();
 
-        
+    socialMedia.forEach((element) {
+      vCard.socialUrls![element.name.toString()] = element.url.toString();
+    });
+    linkList.forEach((element) {
+      vCard.socialUrls![element.name.toString()] = element.url.toString();
+    });
+
+    var vCardString = vCard.getFormattedString();
+    vCardString = vCard.getFormattedString().replaceAll("X-SOCIALPROFILE;CHARSET=UTF-8", "X-SOCIALPROFILE");
+
+    var blob = webFile.Blob([vCardString], 'text/x-vcard', 'native');
+    var anchorElement = webFile.AnchorElement(
+      href: webFile.Url.createObjectUrlFromBlob(blob).toString(),
+    )
+      ..setAttribute("download", "a.vcf")
+      ..click();
+
     // var vCard = VCard();
     // vCard.firstName = 'John';
     // vCard.middleName = 'Pagcu';
