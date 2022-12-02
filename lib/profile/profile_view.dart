@@ -407,34 +407,34 @@ class ProfileView extends GetView<ProfileController> {
                                               mainAxisAlignment: MainAxisAlignment.start,
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
-                                                Container(
-                                                  height: 50,
-                                                  width: 50,
-                                                  // color: kcPrimaryColor.withOpacity(0.1),
-                                                  decoration: BoxDecoration(
-                                                    color: kcPrimaryColor.withOpacity(0.1),
-                                                    borderRadius: BorderRadius.circular(20.0),
-                                                  ),
-                                                  child: Center(
-                                                    child: FadeInImage(
-                                                      placeholder: AssetImage(
-                                                        "assets/defaults/Icons/kcScan.png",
-                                                      ),
-                                                      image: NetworkImage(
-                                                        "https://www.youtube.com/s/desktop/ff71ea81/img/favicon_144x144.png",
-                                                      ),
-                                                      imageErrorBuilder: ((context, error, stackTrace) {
-                                                        return Center(
-                                                          child: Image.asset(
-                                                            "assets/defaults/Icons/kcReorder.png",
-                                                            scale: 3,
-                                                          ),
-                                                        );
-                                                      }),
-                                                    ),
-                                                    // child: Image.network("https://www.youtube.com/s/desktop/ff71ea81/img/favicon_144x144.png"),
-                                                  ),
-                                                ),
+                                                // Container(
+                                                //   height: 50,
+                                                //   width: 50,
+                                                //   // color: kcPrimaryColor.withOpacity(0.1),
+                                                //   decoration: BoxDecoration(
+                                                //     color: kcPrimaryColor.withOpacity(0.1),
+                                                //     borderRadius: BorderRadius.circular(20.0),
+                                                //   ),
+                                                //   child: Center(
+                                                //     child: FadeInImage(
+                                                //       placeholder: AssetImage(
+                                                //         "assets/defaults/Icons/kcScan.png",
+                                                //       ),
+                                                //       image: NetworkImage(
+                                                //         "https://www.youtube.com/s/desktop/ff71ea81/img/favicon_144x144.png",
+                                                //       ),
+                                                //       imageErrorBuilder: ((context, error, stackTrace) {
+                                                //         return Center(
+                                                //           child: Image.asset(
+                                                //             "assets/defaults/Icons/kcReorder.png",
+                                                //             scale: 3,
+                                                //           ),
+                                                //         );
+                                                //       }),
+                                                //     ),
+                                                //     // child: Image.network("https://www.youtube.com/s/desktop/ff71ea81/img/favicon_144x144.png"),
+                                                //   ),
+                                                // ),
                                                 Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -485,7 +485,7 @@ class ProfileView extends GetView<ProfileController> {
                           ),
                         ),
                       )
-                    : controller.isDoneFetching.value != false
+                    : controller.isRefresh.value != true
                         ? Padding(
                             padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 0, top: kIsWeb ? 16 : 0),
                             child: Container(

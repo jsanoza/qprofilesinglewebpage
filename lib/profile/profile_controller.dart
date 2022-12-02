@@ -11,7 +11,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../models/user_model.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'hellothere.dart';
 
 class ProfileController extends GetxController {
@@ -56,10 +55,17 @@ class ProfileController extends GetxController {
         linkList.clear();
         userInformation = parsedList.map((val) => UserModel.fromJson(val)).toList();
 
-        linkList.addAll(userInformation.first.links);
-        log(linkList.first.faviconUrl!);
-        socialMedia.addAll(userInformation.first.socials);
-        socialMedia.forEach((element) => log(element.name.toString()));
+        if (userInformation.first.links.isNotEmpty) {
+          linkList.addAll(userInformation.first.links);
+          log(linkList.length.toString() + "    🥳");
+        }
+
+        if (userInformation.first.socials.isNotEmpty) {
+          socialMedia.addAll(userInformation.first.socials);
+          socialMedia.forEach((element) => log(element.name.toString()));
+        }
+
+        // log(linkList.first.faviconUrl!);
 
         final imgBase64Str = await networkImageToBase64('https://digiqard.blob.core.windows.net/userprofilepicture/${userInformation.first.email}.jpg');
         profilePhotoFromNetworkBytes.value = imgBase64Str.toString();
@@ -101,9 +107,9 @@ class ProfileController extends GetxController {
     socialMedia.forEach((element) {
       vCard.socialUrls![element.name.toString()] = element.url.toString();
     });
-    linkList.forEach((element) {
-      vCard.socialUrls![element.name.toString()] = element.url.toString();
-    });
+    // linkList.forEach((element) {
+    //   vCard.socialUrls![element.name.toString()] = element.url.toString();
+    // });
 
     var vCardString = vCard.getFormattedString();
     vCardString = vCard.getFormattedString().replaceAll("X-SOCIALPROFILE;CHARSET=UTF-8", "X-SOCIALPROFILE");
