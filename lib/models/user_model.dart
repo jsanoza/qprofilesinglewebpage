@@ -14,6 +14,7 @@ class UserModel {
     required this.organization,
     required this.socials,
     required this.links,
+    required this.phoneCode,
   });
   late final String fullname;
   late final String firstname;
@@ -24,11 +25,12 @@ class UserModel {
   late final String photoUrl;
   late final String coverUrl;
   late final String phoneNumber;
-  late final List<String> contacts;
+  late final List<Contacts> contacts;
   late final String email;
   late final String organization;
   late final List<Socials> socials;
   late final List<Links> links;
+  late final String phoneCode;
 
   UserModel.fromJson(Map<String, dynamic> json) {
     fullname = json['fullname'];
@@ -40,7 +42,13 @@ class UserModel {
     photoUrl = json['photoUrl'];
     coverUrl = json['coverUrl'];
     phoneNumber = json['phoneNumber'];
-    contacts = List.castFrom<dynamic, String>(json['contacts']);
+
+    if (json['contacts'] != null) {
+      contacts = <Contacts>[];
+      json['contacts'].forEach((v) {
+        contacts.add(Contacts.fromJson(v));
+      });
+    }
 
     if (json['socials'] != null) {
       socials = <Socials>[];
@@ -56,6 +64,7 @@ class UserModel {
         links.add(Links.fromJson(v));
       });
     }
+    phoneCode = json['phoneCode'];
   }
 
   Map<String, dynamic> toJson() {
@@ -69,11 +78,13 @@ class UserModel {
     _data['photoUrl'] = photoUrl;
     _data['coverUrl'] = coverUrl;
     _data['phoneNumber'] = phoneNumber;
-    _data['contacts'] = contacts;
+    // _data['contacts'] = contacts;
+    _data['contacts'] = contacts.map((v) => v.toJson()).toList();
     _data['email'] = email;
     _data['organization'] = organization;
     _data['socials'] = socials.map((v) => v.toJson()).toList();
     _data['links'] = links.map((v) => v.toJson()).toList();
+    _data['phoneCode'] = phoneCode;
     return _data;
   }
 }
@@ -119,6 +130,28 @@ class UserModel {
 //     return _data;
 //   }
 // }
+
+class Contacts {
+  String? fullName;
+  String? email;
+
+  Contacts({
+    this.fullName,
+    this.email,
+  });
+
+  Contacts.fromJson(Map<String, dynamic> json) {
+    fullName = json['fullName'];
+    email = json['email'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['fullName'] = this.fullName;
+    data['email'] = this.email;
+    return data;
+  }
+}
 
 class Socials {
   String? name;

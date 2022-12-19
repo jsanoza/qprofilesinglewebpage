@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:digiqard/components/component_emptysocialcontacts.dart';
 import 'package:digiqard/profile/profile_controller.dart';
 import 'package:digiqard/utils/app_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -7,9 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
+import '../components/component_emptylistcontacts.dart';
 import '../components/component_linklist.dart';
 import '../components/component_listtext.dart';
 import '../components/component_listtextwithsub.dart';
+import '../components/component_profilephoto.dart';
 import '../components/component_shimmer.dart';
 import '../components/component_socialbutton.dart';
 import '../components/component_text.dart';
@@ -23,6 +26,51 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(context) {
     controller.context = context;
     return Scaffold(
+      backgroundColor: Color(0xffF0F0F0),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.transparent,
+      //   automaticallyImplyLeading: false,
+      //   leading:
+      // ),
+      bottomNavigationBar: Obx(() => controller.isRefresh.value != true
+          ? GestureDetector(
+              onTap: () {
+                controller.addToContacts();
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16, left: 16),
+                child: Container(
+                  padding: EdgeInsets.only(left: 16, right: 16),
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: kcPrimaryColor,
+                    borderRadius: BorderRadius.circular(32.0),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      ComponentText(
+                        text: "Add to Contacts",
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : Container(
+              height: 0,
+              width: 0,
+            )),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -31,18 +79,17 @@ class ProfileView extends GetView<ProfileController> {
               children: [
                 ResponsiveRowColumnItem(
                   child: Container(
-                    height: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 400 : 500,
-                    // color: Colors.green,
+                    height: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 375 : 400,
                     child: Stack(
                       children: [
                         Stack(
                           children: [
                             Container(
                               color: Colors.black,
-                              height: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 300 : 400,
+                              height: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 375 : 400,
                               width: context.width,
                               child: Image.asset(
-                                "assets/kDefaultBackdrop.png",
+                                "assets/kcDefaultBackdrop.png",
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -50,9 +97,10 @@ class ProfileView extends GetView<ProfileController> {
                                 ? Align(
                                     alignment: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? Alignment.topCenter : Alignment.center,
                                     child: Padding(
-                                      padding: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? const EdgeInsets.only(bottom: 0.0, top: 100) : const EdgeInsets.only(bottom: 150.0),
+                                      padding: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? const EdgeInsets.only(bottom: 0.0, top: 120) : const EdgeInsets.only(bottom: 20.0),
                                       child: Container(
-                                        width: 300,
+                                        // width: 300,
+                                        height: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 40 : 80,
                                         child: controller.userInformation.first.organization == "QNET"
                                             ? Image.asset(
                                                 "assets/defaults/overlays/kcOverlayQnet.png",
@@ -73,12 +121,17 @@ class ProfileView extends GetView<ProfileController> {
                                                             "assets/defaults/overlays/kcOverlayRythm.png",
                                                             fit: BoxFit.cover,
                                                           )
-                                                        : controller.userInformation.first.organization == "OTHERS"
+                                                        : controller.userInformation.first.organization == "QIU"
                                                             ? Image.asset(
-                                                                "assets/defaults/overlays/kcOverlayQI.png",
+                                                                "assets/defaults/overlays/kcOverlayQIU.png",
                                                                 fit: BoxFit.cover,
                                                               )
-                                                            : Image.asset("assets/defaults/overlays/kcOverlayQI.png"),
+                                                            : controller.userInformation.first.organization == "QVI"
+                                                                ? Image.asset(
+                                                                    "assets/defaults/overlays/kcOverlayQVI.png",
+                                                                    fit: BoxFit.cover,
+                                                                  )
+                                                                : Image.asset("assets/defaults/overlays/kcOverlayQI.png"),
                                       ),
                                     ),
                                   )
@@ -86,83 +139,56 @@ class ProfileView extends GetView<ProfileController> {
                           ],
                         ),
                         Positioned(
-                          bottom: -40,
-                          left: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 20 : 50,
-                          child: Container(
-                            height: 300,
-                            width: 200,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 0.0, right: 0),
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                child: Obx(() => controller.isRefresh.value != true
-                                    ? Container(
-                                        height: 190,
-                                        width: 190,
-                                        child: CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          backgroundImage: NetworkImage(
+                            bottom: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 50 : 60,
+                            left: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 20 : 50,
+                            child: Obx(() => controller.isRefresh.value != true
+                                ? GestureDetector(
+                                    onTap: () {
+                                      Get.to(ProfilePhoto(
+                                        photoUrl: controller.profilePhotoFromNetwork.value,
+                                        tag: "profile-image-shared",
+                                        isMemory: false,
+                                      ));
+                                    },
+                                    child: Hero(
+                                      tag: "profile-image",
+                                      child: Container(
+                                        height: 100,
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: NetworkImage(
                                             controller.profilePhotoFromNetwork.value,
+                                          )),
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.all(Radius.circular(24)),
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 4,
                                           ),
                                         ),
-                                        // child: Image.network("https://digiqard.blob.core.windows.net/userprofilepicture/johnpaul.s@qigroup.com.jpg"),
-                                      )
-                                    : Container()),
-                              ),
+                                      ),
+                                    ),
+                                  )
+                                : Container())),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0, left: 16),
+                            child: Obx(
+                              () => controller.isRefresh.value != true
+                                  ? ComponentText(
+                                      text: controller.userInformation.first.fullname.toString().toTitleCase(),
+                                      color: Colors.black,
+                                      textAlign: TextAlign.justify,
+                                      fontSize: 35,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.visible,
+                                    )
+                                  : Container(),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 40 : 0,
-                          right: 0,
-                          child: Container(
-                            // color: Colors.green,
-                            height: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 60 : 100,
-                            width: context.width - 200,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Obx(() => controller.isRefresh.value != true
-                                    ? GestureDetector(
-                                        onTap: () {
-                                          controller.addToContacts();
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 40, top: 16),
-                                          child: Container(
-                                            padding: EdgeInsets.only(left: 16, right: 16),
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                              color: kcPrimaryColor,
-                                              borderRadius: BorderRadius.circular(32.0),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  Icons.add,
-                                                  color: Colors.white,
-                                                ),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                ComponentText(
-                                                  text: "Add to Contacts",
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container()),
-                              ],
-                            ),
-                          ),
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -175,10 +201,15 @@ class ProfileView extends GetView<ProfileController> {
                     ? Container(
                         padding: EdgeInsets.all(8),
                         width: context.width,
-                        child: ComponentListTextWithSubtitle(
-                          isDense: true,
-                          text: controller.userInformation.first.fullname.toString().toTitleCase(),
-                          subtext: controller.userInformation.first.position.toString(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0, left: 16),
+                          child: ComponentText(
+                            text: controller.userInformation.first.position.toString().toTitleCase(),
+                            color: Colors.black,
+                            textAlign: TextAlign.justify,
+                            fontSize: 16,
+                            overflow: TextOverflow.visible,
+                          ),
                         ),
                       )
                     : Padding(
@@ -193,7 +224,7 @@ class ProfileView extends GetView<ProfileController> {
             ResponsiveRowColumnItem(
               child: Container(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 24.0, right: 16, top: 16),
+                  padding: const EdgeInsets.only(left: 24.0, right: 16, top: 24),
                   child: Container(
                     // height: 300,
                     decoration: BoxDecoration(
@@ -209,17 +240,41 @@ class ProfileView extends GetView<ProfileController> {
                       children: [
                         Obx(
                           () => controller.isRefresh.value != true
-                              ? Container(
-                                  child: Column(
-                                    children: [
-                                      ComponentTitle(text: "About Me"),
-                                      ComponentListText(
-                                        text: controller.userInformation.first.bio.toString().capitalizeFirst,
-                                        isDense: false,
+                              ? controller.userInformation.first.bio.toString() != ""
+                                  ? Container(
+                                      child: Column(
+                                        children: [
+                                          ComponentTitle(text: "About Me"),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 16.0, top: 8),
+                                            child: Row(
+                                              children: [
+                                                ComponentText(
+                                                  text: controller.userInformation.first.bio.toString().capitalizeFirst!,
+                                                  textAlign: TextAlign.justify,
+                                                  color: Color(0xff5C627C),
+                                                  fontSize: 16,
+                                                  overflow: TextOverflow.visible,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          // ComponentListText(
+                                          //   text: controller.userInformation.first.bio.toString().capitalizeFirst,
+                                          //   isDense: false,
+                                          // ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                            child: Divider(
+                                              thickness: 2,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
+                                    )
+                                  : SizedBox(
+                                      height: 16,
+                                    )
                               : Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: ComponentShimmer(
@@ -228,19 +283,37 @@ class ProfileView extends GetView<ProfileController> {
                                   ),
                                 ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                          child: Divider(
-                            thickness: 2,
-                          ),
+                        Obx(
+                          () => controller.isRefresh.value != true
+                              ? GestureDetector(
+                                  onTap: () {
+                                    launchCall(controller.userInformation.first.phoneCode.toString() + controller.userInformation.first.phoneNumber.toString(), context.width);
+                                  },
+                                  child: ComponentListText(
+                                    assetIcon: "assets/defaults/Icons/kcCall.png",
+                                    text: controller.userInformation.first.phoneCode.toString() + " " + controller.userInformation.first.phoneNumber.toString(),
+                                    isDense: true,
+                                  ),
+                                )
+                              : Padding(
+                                  padding: const EdgeInsets.only(left: 8.0, right: 8, top: 8),
+                                  child: ComponentShimmer(
+                                    height: 15.0,
+                                    width: context.width,
+                                  ),
+                                ),
                         ),
                         Obx(
                           () => controller.isRefresh.value != true
-                              ? ComponentListText(
-                                  assetIcon: "assets/kcCall.png",
-                                  // icon: Icons.phone,
-                                  text: controller.userInformation.first.phoneNumber.toString(),
-                                  isDense: true,
+                              ? GestureDetector(
+                                  onTap: () {
+                                    launchEmail(controller.userInformation.first.email.toString(), context.width, context);
+                                  },
+                                  child: ComponentListText(
+                                    assetIcon: "assets/defaults/Icons/kcEmail.png",
+                                    text: controller.userInformation.first.email.toString(),
+                                    isDense: true,
+                                  ),
                                 )
                               : Padding(
                                   padding: const EdgeInsets.only(left: 8.0, right: 8, top: 8),
@@ -253,22 +326,7 @@ class ProfileView extends GetView<ProfileController> {
                         Obx(
                           () => controller.isRefresh.value != true
                               ? ComponentListText(
-                                  assetIcon: "assets/kcEmail.png",
-                                  text: controller.userInformation.first.email.toString(),
-                                  isDense: true,
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.only(left: 8.0, right: 8, top: 8),
-                                  child: ComponentShimmer(
-                                    height: 15.0,
-                                    width: context.width,
-                                  ),
-                                ),
-                        ),
-                        Obx(
-                          () => controller.isRefresh.value != true
-                              ? ComponentListText(
-                                  assetIcon: "assets/kcLocation.png",
+                                  assetIcon: "assets/defaults/Icons/kcLocation.png",
                                   text: controller.userInformation.first.location.toString(),
                                   isDense: true,
                                 )
@@ -299,7 +357,7 @@ class ProfileView extends GetView<ProfileController> {
               child: Obx(
                 () => controller.socialMedia.isNotEmpty
                     ? Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 0, top: kIsWeb ? 16 : 0),
+                        padding: const EdgeInsets.only(left: 24.0, right: 24, bottom: 0, top: kIsWeb ? 16 : 0),
                         child: Obx(
                           () => controller.isRefresh.value != true
                               ? Container(
@@ -307,11 +365,12 @@ class ProfileView extends GetView<ProfileController> {
                                     shrinkWrap: true,
                                     padding: EdgeInsets.all(0),
                                     physics: NeverScrollableScrollPhysics(),
-                                    childAspectRatio: kIsWeb ? 6 / 1.2 : 4 / 1.3,
+                                    childAspectRatio: ResponsiveWrapper.of(context).isSmallerThan(DESKTOP) ? 3.5 : 6,
                                     crossAxisCount: 2,
                                     children: controller.socialMedia
                                         .map((item) => ComponentSocialButton(
                                               onTap: () {
+                                                launchSocialUrl(item.url.toString());
                                                 log(item.url.toString());
                                               },
                                               socialName: item.name,
@@ -329,28 +388,7 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                       )
                     : controller.isDoneFetching.value != false
-                        ? Padding(
-                            padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 0, top: kIsWeb ? 16 : 0),
-                            child: Container(
-                              height: 150,
-                              width: context.width,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
-                                  style: BorderStyle.solid,
-                                  width: 1.0,
-                                ),
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              child: Center(
-                                child: ComponentText(
-                                  text: "Uh-oh looks like you haven't added any social media profile!",
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          )
+                        ? EmptySocialContacts(context, context.width)
                         : Padding(
                             padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 0, top: kIsWeb ? 16 : 0),
                             child: ComponentShimmer(
@@ -370,7 +408,7 @@ class ProfileView extends GetView<ProfileController> {
               child: Obx(
                 () => controller.linkList.isNotEmpty
                     ? Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 0, top: kIsWeb ? 16 : 8),
+                        padding: const EdgeInsets.only(left: 24.0, right: 24, bottom: 0, top: kIsWeb ? 16 : 8),
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
@@ -391,6 +429,7 @@ class ProfileView extends GetView<ProfileController> {
                                     itemBuilder: ((context, index) {
                                       return GestureDetector(
                                         onTap: () {
+                                          launchSocialUrl(controller.linkList[index].url!);
                                           log(controller.linkList[index].url!);
                                         },
                                         child: Padding(
@@ -407,34 +446,35 @@ class ProfileView extends GetView<ProfileController> {
                                               mainAxisAlignment: MainAxisAlignment.start,
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
-                                                // Container(
-                                                //   height: 50,
-                                                //   width: 50,
-                                                //   // color: kcPrimaryColor.withOpacity(0.1),
-                                                //   decoration: BoxDecoration(
-                                                //     color: kcPrimaryColor.withOpacity(0.1),
-                                                //     borderRadius: BorderRadius.circular(20.0),
-                                                //   ),
-                                                //   child: Center(
-                                                //     child: FadeInImage(
-                                                //       placeholder: AssetImage(
-                                                //         "assets/defaults/Icons/kcScan.png",
-                                                //       ),
-                                                //       image: NetworkImage(
-                                                //         "https://www.youtube.com/s/desktop/ff71ea81/img/favicon_144x144.png",
-                                                //       ),
-                                                //       imageErrorBuilder: ((context, error, stackTrace) {
-                                                //         return Center(
-                                                //           child: Image.asset(
-                                                //             "assets/defaults/Icons/kcReorder.png",
-                                                //             scale: 3,
-                                                //           ),
-                                                //         );
-                                                //       }),
-                                                //     ),
-                                                //     // child: Image.network("https://www.youtube.com/s/desktop/ff71ea81/img/favicon_144x144.png"),
-                                                //   ),
-                                                // ),
+                                                Container(
+                                                  height: 50,
+                                                  width: 50,
+                                                  // color: kcPrimaryColor.withOpacity(0.1),
+                                                  decoration: controller.linkList[index].faviconUrl != ""
+                                                      ? BoxDecoration(
+                                                          color: kcPrimaryColor.withOpacity(0.1),
+                                                          borderRadius: BorderRadius.circular(20.0),
+                                                        )
+                                                      : BoxDecoration(),
+                                                  child: Center(
+                                                    child: FadeInImage(
+                                                      placeholder: AssetImage(
+                                                        "assets/defaults/Icons/kcScan.png",
+                                                      ),
+                                                      image: NetworkImage(
+                                                        controller.linkList[index].faviconUrl!,
+                                                      ),
+                                                      imageErrorBuilder: ((context, error, stackTrace) {
+                                                        return Center(
+                                                          child: Image.asset(
+                                                            "assets/defaults/Socials/kcDefaultSocial.png",
+                                                            scale: 3,
+                                                          ),
+                                                        );
+                                                      }),
+                                                    ),
+                                                  ),
+                                                ),
                                                 Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -470,6 +510,45 @@ class ProfileView extends GetView<ProfileController> {
                                                 ),
                                               ],
                                             ),
+                                            // child: Row(
+                                            //   mainAxisAlignment: MainAxisAlignment.start,
+                                            //   crossAxisAlignment: CrossAxisAlignment.center,
+                                            //   children: [
+                                            //     Column(
+                                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                                            //       mainAxisAlignment: MainAxisAlignment.center,
+                                            //       children: [
+                                            //         Row(
+                                            //           children: [
+                                            //             Padding(
+                                            //               padding: const EdgeInsets.only(left: 16.0, right: 16),
+                                            //               child: ComponentText(
+                                            //                 text: controller.linkList[index].name!,
+                                            //                 color: Colors.black,
+                                            //                 fontWeight: FontWeight.bold,
+                                            //                 fontSize: 18,
+                                            //                 overflow: TextOverflow.visible,
+                                            //               ),
+                                            //             ),
+                                            //           ],
+                                            //         ),
+                                            //         Row(
+                                            //           children: [
+                                            //             Padding(
+                                            //               padding: const EdgeInsets.only(left: 18.0, right: 16, top: 0),
+                                            //               child: ComponentText(
+                                            //                 overflow: TextOverflow.visible,
+                                            //                 text: controller.linkList[index].url!,
+                                            //                 color: Colors.grey,
+                                            //                 // fontSize: 20,
+                                            //               ),
+                                            //             ),
+                                            //           ],
+                                            //         ),
+                                            //       ],
+                                            //     ),
+                                            //   ],
+                                            // ),
                                           ),
                                         ),
                                       );
@@ -486,28 +565,7 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                       )
                     : controller.isRefresh.value != true
-                        ? Padding(
-                            padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 0, top: kIsWeb ? 16 : 0),
-                            child: Container(
-                              height: 150,
-                              width: context.width,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
-                                  style: BorderStyle.solid,
-                                  width: 1.0,
-                                ),
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              child: Center(
-                                child: ComponentText(
-                                  text: "Uh-oh looks like you haven't added any links on your profile!",
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          )
+                        ? EmptyLinksContacts(context, context.width)
                         : Padding(
                             padding: const EdgeInsets.only(left: 16.0, right: 16, bottom: 0, top: kIsWeb ? 16 : 0),
                             child: ComponentShimmer(

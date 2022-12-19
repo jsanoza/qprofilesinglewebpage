@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
             background: Container(color: const Color(0xFFF5F5F5)));
       },
       debugShowCheckedModeBanner: false,
-      title: 'digiQard',
+      title: 'DigiQard',
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
